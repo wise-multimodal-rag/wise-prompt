@@ -1,0 +1,154 @@
+[build-system]
+requires = [
+    "pip >= 23.1",
+    "setuptools >= 67.6.1",
+    "wheel >= 0.40.0"
+]
+build-backend = "setuptools.build_meta"
+
+
+[tool.poetry]
+name = "wise-prompt"
+version = "v1"
+authors = [
+    "Seoyeon Park <sally9476@wisenut.co.kr>"
+]
+maintainers = [
+    "Moonjong Kim <penbell@wisenut.co.kr>",
+    "Chanhyeong Lee <wisnt65@wisenut.co.kr>",
+    "Seoyeon Park <sally9476@wisenut.co.kr>",
+    "Joongheon Jeong <legagain@wisenut.co.kr>"
+]
+description = "AIP Team Wise Prompt Engineering API"
+readme = "README.md"
+keywords = ["python", "fastapi", "prompt engineering", "prompt", "prompting"]
+license = "LICENSE"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Framework :: AsyncIO",
+    "Framework :: FastAPI",
+    "Natural Language :: Korean",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Internet :: WWW/HTTP",
+    "Intended Audience :: Developers"
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+fastapi = "0.111.0"
+loguru = "^0.7.2"
+pydantic = "^2.7.0"
+pyyaml = "^6.0.1"
+uvicorn = "^0.29.0"
+pydantic-settings = "^2.2.1"
+langchain-ollama = "^0.1.0"
+langchain = "^0.2.11"
+langchain-community = "^0.2.10"
+openai = "^1.37.1"
+langchain-openai = "^0.1.17"
+langchainhub = "^0.1.20"
+langchain-huggingface = "^0.0.3"
+
+
+[tool.poetry.group.lint.dependencies]
+ruff = "^0.3.7"
+mypy = "^1.10.0"
+pyright = "^1.1.365"
+
+[tool.poetry.group.test.dependencies]
+httpx = "^0.27.0"
+pytest = "^8.2.1"
+pytest-cov = "^5.0.0"
+
+[tool.poetry.group.gunicorn.dependencies]
+gunicorn = "^22.0.0"
+
+[tool.setuptools]
+py-modules = ["app"]
+
+
+[tool.ruff]
+line-length = 125
+exclude = [
+    '.git',
+    '__pycache__',
+    '.mypy_cache',
+    '.ruff_cache',
+    'docs',
+    'venv',
+    'tests',
+    'build',
+    'dist',
+    './app/__init__.py',
+    'gunicorn.conf.py'
+]
+target-version = "py39"
+[tool.ruff.lint]
+ignore = ['W']
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.mypy]
+plugins = [
+    'pydantic.mypy'
+]
+python_version = "3.9"
+follow_imports = "skip"
+warn_redundant_casts = true
+warn_unused_ignores = false # true시 ignore 처리 error로 뜨게 함
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+warn_return_any = true
+warn_unused_configs = true
+exclude = [
+    '.git',
+    '__pycache__',
+    '.mypy_cache',
+    '.ruff_cache',
+    'docs',
+    'venv',
+    'tests',
+    'build',
+    'dist',
+    'gunicorn.conf.py'
+]
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+[[tool.mypy.overrides]]
+module = [
+    "kiwipiepy",
+    "keybert",
+    "toml",
+    "yaml",
+    "version_info"
+]
+ignore_missing_imports = true
+
+
+[tool.pyright]
+include = ["app"]
+exclude = [
+    '.git',
+    '__pycache__',
+    '.mypy_cache',
+    '.ruff_cache',
+    '.pytest_cache',
+    'docs',
+    'venv',
+    'tests',
+    'build',
+    'dist',
+    'pypi',
+    'logs',
+    'gunicorn.conf.py'
+]
+defineConstant = { DEBUG = true }
+reportMissingImports = true
+reportMissingTypeStubs = false
+typeCheckingMode = "basic"
+pythonVersion = "3.9"

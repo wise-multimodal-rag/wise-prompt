@@ -1,0 +1,35 @@
+# local environment
+.idea
+.ipynb_checkpoints
+.vscode
+__pycache__
+htmlcov
+dist
+site
+venv
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+coverage.xml
+/logs/
+version_info.py
+sql_app.db
+build/
+dist/
+*.egg-info
+.netlify
+test.db
+log.txt
+Pipfile.lock
+env3.*
+env
+docs_build
+site_build
+docs.zip
+archive.zip
+
+# vim temporary files
+*~
+.*.sw?
+.cache
