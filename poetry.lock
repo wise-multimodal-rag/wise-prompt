@@ -2712,6 +2712,36 @@ mpmath = ">=1.1.0,<1.4"
 dev = ["hypothesis (>=6.70.0)", "pytest (>=7.1.0)"]
 
 [[package]]
+name = "tabulate"
+version = "0.9.0"
+description = "Pretty-print tabular data"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "tabulate-0.9.0-py3-none-any.whl", hash = "sha256:024ca478df22e9340661486f85298cff5f6dcdba14f3813e8830015b9ed1948f"},
+    {file = "tabulate-0.9.0.tar.gz", hash = "sha256:0095b12bf5966de529c0feb1fa08671671b3368eec77d7ef7ab114be2c068b3c"},
+]
+
+[package.extras]
+widechars = ["wcwidth"]
+
+[[package]]
+name = "tavily-python"
+version = "0.3.5"
+description = "Python wrapper for the Tavily API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "tavily_python-0.3.5-py3-none-any.whl", hash = "sha256:5ee7a7a5eb06674dfb68606608b5c6feea411755e0ea4ec14aa6c4a2cbcaa696"},
+    {file = "tavily_python-0.3.5.tar.gz", hash = "sha256:415db6e98d9f03f0879c33bd3d0d3d766f2c1333fc7559fdce82cc8514a7127b"},
+]
+
+[package.dependencies]
+httpx = "*"
+requests = "*"
+tiktoken = ">=0.5.1"
+
+[[package]]
 name = "tenacity"
 version = "8.5.0"
 description = "Retry code until it succeeds"
@@ -3591,4 +3621,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "9be4e3eec67c3e3367fc84c57a358cf36b7047aaba2535efc8ec71eab8b4f78c"
+content-hash = "41f5534aba55437c9c032e7d3db398464602a938243a35af12414f88197949b7"

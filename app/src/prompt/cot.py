@@ -1,22 +1,13 @@
-from langchain_core.prompts import ChatPromptTemplate
+from app.models import LLMProviderRequest
+from app.constants import MagicSentence, PromptTemplate
+from app.src.llm_provider.llm_tool import model_setting
 
-from app.src.ollama import model
 
-
-def cot_prompt(request):
-    template = """Question: {question}
-    
-    {magic_sentence}
-    
-    Answer: """
-    prompt = ChatPromptTemplate.from_template(template)
-    chain = prompt | model
+def cot_prompt(system_prompt, prompt, llm_provider: LLMProviderRequest):
+    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature, llm_provider.top_k)
+    chain = PromptTemplate.COT | model
     result = chain.invoke(
-        {"question": request.prompt,
-         "magic_sentence": "Let's work this out in a step by step way to be sure we have the right answer."}
+        {"system_prompt": system_prompt, "prompt": prompt,
+         "magic_sentence": MagicSentence.COT_DEFAULT_MAGIC_SENTENCE}
     )
     return result.content
-
-
-def auto_cot_prompt(request):
-    pass

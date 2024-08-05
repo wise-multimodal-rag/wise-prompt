@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     PORT: int = 8000
-    SERVICE_NAME: str = "Python FastAPI Template"
+    SERVICE_NAME: str = "Wise Prompt"
     SERVICE_CODE: int = 100
     MAJOR_VERSION: str = "v1"
     STATUS: str = "dev"
@@ -68,6 +68,7 @@ class Settings(BaseSettings):
 
     # Service Config
     X_TOKEN: str = "wisenut"
+    OLLAMA_BASE_URL: str = "http://61.82.137.170:11434"
 
 
 settings = Settings()  # type: ignore
