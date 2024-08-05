@@ -13,3 +13,10 @@
 - _Self-Consistency_
 - _ReAct_
 - ...
+
+### TODO
+- Auto-CoT: dataset 도메인별 적용 방안
+- Self-Consistency: 함수가 아닌 langchain 라이브러리를 이용해서 두 단계를 하나의 파이프라인으로 연결
+- Self-Consistency: API Call Batch
+- ReAct: 직접 구현
+- ReAct: TavilySearch 의존성 제거

@@ -23,7 +23,7 @@ from app.dependencies import get_token_header
 from app.docs.main import description
 from app.log import setup_logging
 from app.routers import prompt
-from app.src.exception.service import SampleServiceError
+from app.src.exception.service import WisePromptServiceError
 from app.version import GIT_REVISION, GIT_BRANCH, BUILD_DATE, GIT_SHORT_REVISION, VERSION, get_current_datetime
 
 # 앱 구동 성공 여부와 상관없이 앱 정보 출력
@@ -131,14 +131,14 @@ async def request_validation_exception_handler(request: Request, exc: Validation
     return JSONResponse(
         status_code=200, content={
             "code": int(f"{settings.SERVICE_CODE}{status.HTTP_422_UNPROCESSABLE_ENTITY}"),
-            "message": "pydantic model ValidationError 발생",
+            "message": "pydantic llm_provider ValidationError 발생",
             "result": {"body": exc.errors()}
         }
     )
 
 
-@app.exception_handler(SampleServiceError)
-async def custom_exception_handler(request: Request, exc: SampleServiceError):
+@app.exception_handler(WisePromptServiceError)
+async def custom_exception_handler(request: Request, exc: WisePromptServiceError):
     logging.error(f"{request.client} {request.method} {request.url} → {repr(exc)}")
     return JSONResponse(
         status_code=200, content={"code": int(exc.code), "message": f"{exc.message}", "result": exc.result}
