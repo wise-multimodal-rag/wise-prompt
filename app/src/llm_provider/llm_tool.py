@@ -13,8 +13,8 @@ from app.constants import ModelOption
 from app.src.exception.service import InvalidLLMProviderNameError
 
 
-def openai_model(temp: float = ModelOption.TEMPERATURE):
-    client = ChatOpenAI(temperature=temp)
+def openai_model(model_name, temp: float = ModelOption.TEMPERATURE):
+    client = ChatOpenAI(model=model_name, temperature=temp)
     return client
 
 
@@ -24,12 +24,12 @@ def ollama_model(model_name: str, temp: float = ModelOption.TEMPERATURE, k: floa
     return client
 
 
-def model_setting(llm_tool: str, model_name: str, temp: float = ModelOption.TEMPERATURE, k: float = ModelOption.TOP_K):
+def model_setting(llm_tool: str, model_name: str, temp: float = ModelOption.TEMPERATURE):
     model = ollama_model(model_name)  # default
     if llm_tool.lower() == 'ollama':
-        model = ollama_model(model_name, temp, k)
+        model = ollama_model(model_name, temp)
     elif llm_tool.lower() == 'openai':
-        model = openai_model(temp)
+        model = openai_model(model_name, temp)
     else:
         InvalidLLMProviderNameError(model_name)
     return model

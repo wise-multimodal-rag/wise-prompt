@@ -110,14 +110,19 @@ def get_cluster_center(clustered_dists, clustered_idx, rationale, pred_ans, ques
     return demos
 
 
+def embeddings(corpus, encoder_name):
+    encoder = SentenceTransformer(encoder_name)
+    corpus_embeddings = encoder.encode(corpus)
+    return corpus_embeddings
+
+
 def question_clustering(domain: str, encoder_name, n_clusters, random_seed, max_ra_len):
     # TODO: demonstration&answer dataset 어떻게 받을지, 형식 지정?,
     dataset_path = f"./dataset/{domain.replace(' ', '_')}_zero_shot_cot.log"
     if not Path(dataset_path).exists():
         raise InvalidDomainError(domain)
     corpus, question, rationale, pred_ans = get_cot_dataset(dataset_path)
-    encoder = SentenceTransformer(encoder_name)
-    corpus_embeddings = encoder.encode(corpus)
+    corpus_embeddings = embeddings(corpus, encoder_name)
     clustered_dists, clustered_idx = kmeans_clustering(n_clusters, corpus, corpus_embeddings, random_seed)
     demos: List[Dict[str, str]] = get_cluster_center(clustered_dists, clustered_idx, rationale, pred_ans, question,
                                                      max_ra_len)
@@ -127,7 +132,7 @@ def question_clustering(domain: str, encoder_name, n_clusters, random_seed, max_
 def demonstration_sampling(demos: List[Dict[str, str]], system_prompt, prompt, llm_provider):
     examples = [f"""{demo['question']} {demo['rationale']} The answer is {demo['pred_ans']}""" for demo in demos]
     logging.debug(f"Question {examples=}")
-    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature, llm_provider.top_k)
+    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature)
     chain = PromptTemplate.AUTO_COT | model
     result = chain.invoke(
         {"system_prompt": system_prompt, "prompt": prompt,
