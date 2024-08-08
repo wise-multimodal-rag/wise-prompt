@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from app.dependencies import get_token_header
 from app.docs.prompt import default_prompt_examples, self_consistency_examples, react_examples, auto_cot_examples
-from app.models import APIResponseModel, Request, AutoCoTRequest, SelfConsistencyRequest
+from app.models import APIResponseModel, Request, AutoCoTRequest, SelfConsistencyRequest, ReActRequest, ReActResponse
 from app.src.prompt.auto_cot import auto_cot_prompt
 from app.src.prompt.cot import cot_prompt
 from app.src.prompt.default import default_prompt
@@ -28,6 +28,7 @@ async def default(
             openapi_examples=default_prompt_examples,  # pyright: ignore
         )]
 ):
+    """기본 프롬프트로 내장된 시스템 프롬프트를 기준으로 설정한 LLM이 답변을 생성합니다."""
     result = default_prompt(request.system_prompt, request.prompt, request.llm_provider)
     return APIResponseModel(result=result, description="기본 프롬프트 기법으로 답변 성공")
 
@@ -98,9 +99,9 @@ async def self_consistency(
     return APIResponseModel(result=result, description="Self-consistency 프롬프트 기법으로 답변 성공")
 
 
-@router.post("/react", response_model=APIResponseModel, response_class=JSONResponse, deprecated=True)
+@router.post("/react", response_model=APIResponseModel, response_class=JSONResponse)
 async def react(
-        request: Annotated[Request, Body(
+        request: Annotated[ReActRequest, Body(
             title="ReAct prompting",
             description="ReAct 프롬프트 기법으로 답변 반환 API",
             media_type="application/json",
@@ -110,8 +111,11 @@ async def react(
     """추론(Reasoning)과 행동(Action)을 연결하여 문제를 해결하는 방식\n
     이는 모델이 문제에 대해 추론한 후, 그에 따른 행동을 생성하고, 다시 그 행동의 결과를 바탕으로 추론하는 과정을 반복하는 것을 의미합니다.
 
-    해당 방법론은 **TavilySearch API**를 사용하여 API KEY를 받급받아 `TAVILY_API_KEY` 환경변수로 설정해야 사용이 가능합니다.\n
-    TavilySearch API는 Researcher 무료 플랜 기준 1,000 API Calls (Monthly) 을 제공합니다.
+    해당 방법론은 Wikipedia, DuckDuckGoSearch 검색기를 통해서 정보를 얻어 최종결과를 생성합니다.\n
+    _특정 모델과 검색기에 따라서 결과가 달라질 수 있으며, 나오지 않을 수 있습니다._
     """
-    result = react_prompt(request.system_prompt, request.prompt, request.llm_provider)
-    return APIResponseModel(result=result, description="ReAct 프롬프트 기법으로 답변 성공")
+    answer, intermediate_steps = react_prompt(request.system_prompt, request.prompt, request.llm_provider,
+                                              request.tool, request.top_k_search_result, request.max_iterations)
+    return APIResponseModel(
+        result=ReActResponse(answer=answer, intermediate_steps=intermediate_steps),  # pyright: ignore
+        description="ReAct 프롬프트 기법으로 답변 성공")

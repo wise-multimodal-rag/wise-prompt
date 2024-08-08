@@ -1,10 +1,11 @@
 from typing import Union, Dict, List, Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.config import settings
 from app.constants import ModelOption, PromptTemplate
 from app.log import Log
+from app.src.exception.service import InvalidReActToolError
 from app.version import VERSION
 
 
@@ -17,14 +18,17 @@ class LLMProviderRequest(BaseModel):
         title="Model Output Randomness",
         description="0에 가까울수록 같은 결과를 내고 1이나 그 이상이면 더 다양한 단어(토큰)들을 뱉게 됨",
         default=ModelOption.TEMPERATURE)
-    top_k: int = Field(description="LLM이 다음 단어(토큰)을 예측할 때 가장 확률 높은 k개 중 하나를 선택", default=ModelOption.TOP_K)
 
 
 class Request(BaseModel):
     # TODO: 설명 or reasoning chain 필요한지 옵션
     system_prompt: str = Field(title="System Prompt", default=PromptTemplate.SYSTEM_PROMPT)
-    prompt: str
+    prompt: str = Field(title="프롬프트")
     llm_provider: LLMProviderRequest = Field(default=LLMProviderRequest())
+
+    @field_validator('prompt')
+    def check_prompt(cls, v):
+        return v.strip()
 
 
 class AutoCoTRequest(Request):
@@ -46,8 +50,31 @@ class SelfConsistencyRequest(Request):
     num: int = Field(title="답변 생성 수행 횟수", description="비용 및 시간 주의해서 설정해야함", default=7)
 
 
+class ReActRequest(Request):
+    tool: str = Field(
+        title="검색 툴 선택", description="Wikipedia, DuckDuckGoSearch 중에서 선택해서 사용 가능", default="Wikipedia")
+    top_k_search_result: int = Field(title="상위 k개의 검색 결과", default=2)
+    max_iterations: int = Field(
+        title="실행을 종료하기 전에 수행할 최대 단계 수",
+        description="""OpenAI의 경우, 호출 수가 많을 경우 과금의 우려가 있으나 주의바람. 
+        또한 호출 수가 적을 경우, 답변이 누락될 수 있음 (`Agent stopped due to iteration limit or time limit.`)""",
+        default=15)
+
+    @field_validator('tool')
+    def check_tool(cls, v: str):
+        if v.lower() not in ['wikipedia', 'duckduckgosearch']:
+            raise InvalidReActToolError(v)
+        return v
+
+
+class ReActResponse(BaseModel):
+    answer: str = Field(title="답변")
+    intermediate_steps: List[Dict[str, str]] = Field(title="", description="")
+
+
 class APIResponseModel(BaseModel):
     code: int = Field(default=int(f"{settings.SERVICE_CODE}200"))
     message: str = Field(default=f"답변 성공 ({VERSION})" if Log.is_debug_enable() else "답변 성공")
-    result: Union[str, List[Union[str, Dict[str, Any]]], Dict[str, Union[str, Dict[str, str]]]] = Field(default={})
+    result: Union[ReActResponse,
+    str, List[Union[str, Dict[str, Any]]], Dict[str, Union[str, Dict[str, str]]]] = Field(default={})
     description: str = Field(default="답변 성공")

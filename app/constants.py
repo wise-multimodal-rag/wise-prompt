@@ -14,10 +14,12 @@ class MagicSentence:
         str] = "Let's work this out in a step by step way to be sure we have the right answer."
 
 
+# TODO: 최적화된 한국어 템플릿으로 변경 (답변을 한국어로 통일) OR 영어와 한국어를 판단해서 번역해서 하나의 언어로 사용?
 class PromptTemplate:
     # TODO: 정해진 형식 추출하는 과정 공통으로 빼기
     # TODO: SYSTEM_PROMPT 어떻게 설정하면 좋은 답변이 나오는가? (페르소나)
-    SYSTEM_PROMPT = """You are a very smart and kind Robot."""
+    SYSTEM_PROMPT = """You are a very kind and smart robot who can speak Korean and English. 
+    Answers must always be in Korean."""
     DEFAULT = ChatPromptTemplate.from_messages([
         ("system", "{system_prompt}"),
         ("human", "Question: {prompt}")
@@ -64,6 +66,7 @@ class PromptTemplate:
                 Final Answer: the final answer to the original input question
 
                 Begin!
+                
 
                 Question: {input}
                 Thought:{agent_scratchpad}
@@ -79,4 +82,4 @@ class PromptTemplate:
     TRANSLATE = ChatPromptTemplate.from_messages([
         ("system", "{system_prompt}"),
         ("human",
-         """If necessary, please translate the following sentence into Korean Or just post the following sentence.: {text}""")])
+         """If necessary, please translate the following sentence into Korean or just post the following sentence.: {text}""")])

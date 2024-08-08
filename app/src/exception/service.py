@@ -1,5 +1,4 @@
 import json
-import os
 
 from starlette import status
 
@@ -31,13 +30,13 @@ class TokenValidationError(WisePromptServiceError):
         self.result = {"current_x_token": x_token}
 
 
-class InvalidTavilySearchTokenError(WisePromptServiceError):
-    """유효하지 않은 TavilySearch 토큰값 설정"""
+class InvalidReActToolError(WisePromptServiceError):
+    """유효하지 않은 ReAct Tool 값 설정"""
 
-    def __init__(self):
+    def __init__(self, tool: str):
         self.code = int(f"{settings.SERVICE_CODE}{status.HTTP_400_BAD_REQUEST}")
-        self.message = "You have to set available TAVILY_API_KEY to environment variables to use ReAct Prompting Method."
-        self.result = {"TAVILY_API_KEY": os.getenv('TAVILY_API_KEY')}
+        self.message = "You have to set available tools to use ReAct Prompting Method: Wikipedia, DuckDuckGoSearch"
+        self.result = {"current_tool": tool}
 
 
 class InvalidLLMProviderNameError(WisePromptServiceError):

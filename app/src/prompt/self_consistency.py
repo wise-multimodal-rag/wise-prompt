@@ -8,7 +8,7 @@ from app.src.llm_provider.llm_tool import model_setting
 
 
 def get_cot_answer_json_format(system_prompt, prompt, llm_provider: LLMProviderRequest):
-    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature, llm_provider.top_k)
+    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature)
     chain = PromptTemplate.SELF_CONSISTENCY | model
     answer = chain.invoke({
         "system_prompt": system_prompt, "prompt": prompt,
@@ -20,7 +20,7 @@ def get_cot_answer_json_format(system_prompt, prompt, llm_provider: LLMProviderR
 
 
 def get_answer_from_json_object(system_prompt, llm_provider, answer, final_answers):
-    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature, llm_provider.top_k)
+    model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature)
     chain = PromptTemplate.GET_JSON_VALUE | model
     result = chain.invoke({"system_prompt": system_prompt, "json_object": answer, "key": 'answer'})
     final_answers[result.content] += 1
