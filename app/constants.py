@@ -83,3 +83,19 @@ class PromptTemplate:
         ("system", "{system_prompt}"),
         ("human",
          """If necessary, please translate the following sentence into Korean or just post the following sentence.: {text}""")])
+
+
+class APETemplate:
+    # TODO: ChatPromptTemplate 패턴으로 변경 ([] -> {})
+    ZERO_SHOT_EVALUATION: str = """Instruction: [PROMPT]
+    Input: [INPUT]
+    Output: [OUTPUT]"""
+    INSTRUCTION_WITH_FEW_SHOT: str = """Instruction: [PROMPT]
+
+[full_DEMO]
+
+Input: [INPUT]
+Output: [OUTPUT]"""
+    DEMO_TEMPLATE: str = """Input: [INPUT]
+Output: [OUTPUT]"""
+    PROMPT_GENERATE_TEMPLATE: str = "I gave a friend an instruction. Based on the instruction they produced the following input-output pairs:\n\n[full_DEMO]\n\nThe instruction was to [APE]"
