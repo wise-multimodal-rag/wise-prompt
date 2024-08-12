@@ -22,7 +22,7 @@ from app.config import settings
 from app.dependencies import get_token_header
 from app.docs.main import description
 from app.log import setup_logging
-from app.routers import prompt
+from app.routers import prompt, ape
 from app.src.exception.service import WisePromptServiceError
 from app.version import GIT_REVISION, GIT_BRANCH, BUILD_DATE, GIT_SHORT_REVISION, VERSION, get_current_datetime
 
@@ -59,6 +59,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 app.logger = setup_logging()  # type: ignore
 
 app.include_router(prompt.router, dependencies=[Depends(get_token_header)])
+app.include_router(ape.router, dependencies=[Depends(get_token_header)])
 
 
 @app.middleware("http")
