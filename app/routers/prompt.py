@@ -11,6 +11,7 @@ from app.src.prompt.cot import cot_prompt
 from app.src.prompt.default import default_prompt
 from app.src.prompt.react import react_prompt
 from app.src.prompt.self_consistency import self_consistency_prompt
+from app.version import VERSION
 
 router = APIRouter(
     prefix="/prompt",
@@ -111,11 +112,14 @@ async def react(
     """추론(Reasoning)과 행동(Action)을 연결하여 문제를 해결하는 방식\n
     이는 모델이 문제에 대해 추론한 후, 그에 따른 행동을 생성하고, 다시 그 행동의 결과를 바탕으로 추론하는 과정을 반복하는 것을 의미합니다.
 
-    해당 방법론은 Wikipedia, DuckDuckGoSearch 검색기를 통해서 정보를 얻어 최종결과를 생성합니다.\n
-    _특정 모델과 검색기에 따라서 결과가 달라질 수 있으며, 나오지 않을 수 있습니다._
+    - 해당 방법론은 `Wikipedia`, `DuckDuckGoSearch` 검색기를 통해서 정보를 얻어 최종결과를 생성합니다.\n
+    - 현재 검색 결과를 기반으로 답변을 하는 방법론이기 때문에 검색이 제대로 되지 않았을 경우 답변을 제대로 하지 못할 수 있습니다.\n
+    - 특정 모델과 검색기에 따라서 결과가 매우 달라질 수 있습니다.
     """
     answer, intermediate_steps = react_prompt(request.system_prompt, request.prompt, request.llm_provider,
                                               request.tool, request.top_k_search_result, request.max_iterations)
-    return APIResponseModel(
-        result=ReActResponse(answer=answer, intermediate_steps=intermediate_steps),  # pyright: ignore
-        description="ReAct 프롬프트 기법으로 답변 성공")
+    result_ = ReActResponse(answer=answer, intermediate_steps=intermediate_steps)  # pyright: ignore
+    if answer.strip() == "Agent stopped due to iteration limit or time limit.":
+        return APIResponseModel(message=f"답변 실패 ({VERSION})", result=result_, description="ReAct 프롬프트 기법으로 답변 실패")
+    else:
+        return APIResponseModel(result=result_, description="ReAct 프롬프트 기법으로 답변 성공")
