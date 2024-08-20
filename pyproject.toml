@@ -56,9 +56,9 @@ duckduckgo-search = "^6.2.6"
 
 
 [tool.poetry.group.lint.dependencies]
-ruff = "^0.5.7"
+ruff = "^0.6.1"
 mypy = "^1.11.1"
-pyright = "^1.1.375"
+pyright = "^1.1.376"
 
 [tool.poetry.group.test.dependencies]
 httpx = "^0.27.0"
