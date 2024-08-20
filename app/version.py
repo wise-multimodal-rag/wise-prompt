@@ -118,4 +118,5 @@ def get_version_info():
 VERSION, GIT_REVISION, GIT_SHORT_REVISION, GIT_BRANCH, BUILD_DATE = get_version_info()
 
 if __name__ == "__main__":
+    os.chdir('../')
     write_version_py(file_name='version_info.py')

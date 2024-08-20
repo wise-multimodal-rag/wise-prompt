@@ -1,7 +1,6 @@
 venv
-tests/
 docs/
-logs
+logs/
 .gitlab
 .idea
 *cfg
