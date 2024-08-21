@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     PORT: int = 8000
     SERVICE_NAME: str = "Wise Prompt"
-    SERVICE_CODE: int = 100
+    SERVICE_CODE: int = 121
     MAJOR_VERSION: str = "v1"
     STATUS: str = "dev"
 
