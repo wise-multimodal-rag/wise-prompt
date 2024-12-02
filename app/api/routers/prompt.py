@@ -3,9 +3,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Body
 from fastapi.responses import JSONResponse
 
+from app.api.examples.prompt import default_prompt_examples, self_consistency_examples, react_examples, \
+    auto_cot_examples
 from app.dependencies import get_token_header
-from app.docs.prompt import default_prompt_examples, self_consistency_examples, react_examples, auto_cot_examples
-from app.models import APIResponseModel, Request, AutoCoTRequest, SelfConsistencyRequest, ReActRequest, ReActResponse
+from app.schemas.models import Request, AutoCoTRequest, SelfConsistencyRequest, ReActRequest, ReActResponse
+from app.schemas.response import APIResponseModel
 from app.src.prompt.auto_cot import auto_cot_prompt
 from app.src.prompt.cot import cot_prompt
 from app.src.prompt.default import default_prompt

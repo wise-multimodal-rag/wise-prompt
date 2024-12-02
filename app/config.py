@@ -1,5 +1,6 @@
 import logging
-from typing import Literal, List, Annotated, Any, Union
+import re
+from typing import Literal, List, Annotated, Any, Union, Dict
 
 from pydantic import AnyUrl, BeforeValidator, computed_field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -18,7 +19,7 @@ class Settings(BaseSettings):
         env_file=".env", env_ignore_empty=True, extra="ignore"
     )
 
-    DOMAIN: str = "localhost"
+    # Environment: local, staging, production
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
     PORT: int = 8000
@@ -26,6 +27,9 @@ class Settings(BaseSettings):
     SERVICE_CODE: int = 121
     MAJOR_VERSION: str = "v1"
     STATUS: str = "dev"
+
+    # Request Server URL
+    REQUEST_SERVER_URL: str = ""
 
     # LOG
     LEVEL: str = "INFO"
@@ -48,6 +52,18 @@ class Settings(BaseSettings):
             raise ValueError(f"로그레벨 `LEVEL` 은 'CRITICAL|ERROR|WARNING|INFO|DEBUG|NOTSET' 만 가능. LEVEL={v}")
         return v
 
+    @field_validator('REQUEST_SERVER_URL')
+    def valid_server_url(cls, v):
+        server_url_regex = r'^https?:\/\/(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+(\/[a-zA-Z0-9-._~:/?#[\]@!$&\'()*+,;=]*)?$'
+        pattern = re.compile(server_url_regex)
+        if v:
+            if bool(pattern.match(v)):
+                return v
+            else:
+                raise ValueError(f"URL Validation Error (regex {pattern=}), current url={v}")
+        else:
+            return None
+
     @computed_field  # type: ignore[misc]
     @property
     def log_level(self) -> Any:  # real return type: numeric value (int)
@@ -55,20 +71,27 @@ class Settings(BaseSettings):
 
     @computed_field  # type: ignore[misc]
     @property
-    def server_host(self) -> str:
-        # Use HTTPS for anything other than local development
-        if self.ENVIRONMENT == "local":
-            return f"http://{self.DOMAIN}"
-        return f"https://{self.DOMAIN}"
+    def servers(self) -> Union[List[Dict[str, str]], None]:
+        if self.REQUEST_SERVER_URL:
+            return [{"url": f"{self.REQUEST_SERVER_URL}", "description": f"{self.ENVIRONMENT.capitalize()} Server"}]
+        else:
+            return None
+
+    @computed_field  # type: ignore[misc]
+    @property
+    def root_path_in_servers(self) -> bool:
+        if self.REQUEST_SERVER_URL:
+            return False
+        else:
+            return True
 
     # Backend
-    BACKEND_CORS_ORIGINS: Annotated[
-        Union[List[AnyUrl], str], BeforeValidator(parse_cors)
-    ] = []
+    BACKEND_CORS_ORIGINS: Annotated[Union[List[AnyUrl], str], BeforeValidator(parse_cors)] = []
 
     # Service Config
     X_TOKEN: str = "wisenut"
-    OLLAMA_BASE_URL: str = "http://61.82.137.170:11434"
+    OLLAMA_BASE_URL: str = ""
 
 
 settings = Settings()  # type: ignore
+print(settings.json())

@@ -1,27 +1,10 @@
-import json
-
 from starlette import status
 
 from app.config import settings
+from app.exceptions.base import ApplicationError
 
 
-class WisePromptServiceError(Exception):
-
-    def __init__(self, code: int, message: str, result):
-        self.code = code
-        self.message = message
-        self.result = result
-
-    def __str__(self):
-        exception_data = {
-            "code": self.code,
-            "message": self.message,
-            "result": self.result
-        }
-        return json.dumps(exception_data, indent=4, ensure_ascii=False)
-
-
-class TokenValidationError(WisePromptServiceError):
+class TokenValidationError(ApplicationError):
     """유효하지 않은 토큰 설정"""
 
     def __init__(self, x_token):
@@ -30,7 +13,7 @@ class TokenValidationError(WisePromptServiceError):
         self.result = {"current_x_token": x_token}
 
 
-class InvalidReActToolError(WisePromptServiceError):
+class InvalidReActToolError(ApplicationError):
     """유효하지 않은 ReAct Tool 값 설정"""
 
     def __init__(self, tool: str):
@@ -39,7 +22,7 @@ class InvalidReActToolError(WisePromptServiceError):
         self.result = {"current_tool": tool}
 
 
-class InvalidLLMProviderNameError(WisePromptServiceError):
+class InvalidLLMProviderNameError(ApplicationError):
     """유효하지 않은 LLM Provider 설정"""
 
     def __init__(self, llm_provider):
@@ -48,7 +31,7 @@ class InvalidLLMProviderNameError(WisePromptServiceError):
         self.result = {"current_llm_provider": llm_provider}
 
 
-class InvalidDomainError(WisePromptServiceError):
+class InvalidDomainError(ApplicationError):
     """유효하지 않은 도메인 설정"""
 
     def __init__(self, domain: str):

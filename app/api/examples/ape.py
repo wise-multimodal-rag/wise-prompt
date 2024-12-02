@@ -1,4 +1,4 @@
-from app.models import ApeRequest, ApeInputOutput
+from app.schemas.models import ApeRequest, ApeInputOutput
 
 ape_default_example = {
     "summary": "APE 기본 예제",

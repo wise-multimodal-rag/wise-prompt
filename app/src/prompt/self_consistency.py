@@ -2,7 +2,7 @@ import logging
 from collections import defaultdict
 from typing import DefaultDict, Any
 
-from app.models import LLMProviderRequest
+from app.schemas.models import LLMProviderRequest
 from app.constants import MagicSentence, PromptTemplate
 from app.src.llm_provider.llm_tool import model_setting
 

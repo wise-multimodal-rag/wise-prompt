@@ -1,5 +1,5 @@
 from app.constants import PromptTemplate
-from app.models import SelfConsistencyRequest, Request, LLMProviderRequest, AutoCoTRequest, ReActRequest
+from app.schemas.models import SelfConsistencyRequest, Request, LLMProviderRequest, AutoCoTRequest, ReActRequest
 
 OPENAI_LLM_TOOL = "OpenAI"
 OPENAI_DEFAULT_MODEL = "gpt-4o-mini"

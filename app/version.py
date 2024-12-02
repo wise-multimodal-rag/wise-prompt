@@ -5,8 +5,6 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-from app.config import settings
-
 
 def git_version():
     def _minimal_ext_cmd(cmd):
@@ -45,6 +43,7 @@ def get_current_datetime(format: str = '%Y-%m-%d %H:%M:%S'):
 
 
 def make_version_info():
+    from config import settings
     # Adding the git rev number needs to be done inside write_version_py(),
     # otherwise the import of numpy.version messes up the build under Python 3.
     work_dir = Path.cwd()
@@ -98,7 +97,7 @@ def get_version_info():
     try:
         import version_info  # type: ignore
     except ImportError as ie:
-        logging.error(f"{ie}: Check if 'app.version_info' exists.")
+        logging.error(f"Check if 'app.version_info' exists: {ie}")
         return FULL_VERSION, GIT_REVISION, GIT_SHORT_REVISION, GIT_BRANCH, BUILD_DATE
 
     if hasattr(version_info, 'version'):
@@ -118,5 +117,4 @@ def get_version_info():
 VERSION, GIT_REVISION, GIT_SHORT_REVISION, GIT_BRANCH, BUILD_DATE = get_version_info()
 
 if __name__ == "__main__":
-    os.chdir('../')
     write_version_py(file_name='version_info.py')

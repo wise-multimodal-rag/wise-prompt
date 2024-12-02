@@ -3,7 +3,7 @@ import random
 from typing import List, Tuple
 
 from app.constants import APETemplate
-from app.models import ApeResponse, ApeInputOutput
+from app.schemas.models import ApeResponse, ApeInputOutput
 from app.src.ape import generate, evaluate, config, template, data, llm
 
 

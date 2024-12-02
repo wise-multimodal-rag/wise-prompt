@@ -1,12 +1,9 @@
-from typing import Union, Dict, List, Any
+from typing import Dict, List
 
 from pydantic import BaseModel, Field, field_validator
 
-from app.config import settings
 from app.constants import ModelOption, PromptTemplate
-from app.log import Log
-from app.src.exception.service import InvalidReActToolError
-from app.version import VERSION
+from app.exceptions.service import InvalidReActToolError
 
 
 class LLMProviderRequest(BaseModel):
@@ -90,11 +87,3 @@ class ReActResponse(BaseModel):
 class ApeResponse(BaseModel):
     prompt: str
     score: float
-
-
-class APIResponseModel(BaseModel):
-    code: int = Field(default=int(f"{settings.SERVICE_CODE}200"))
-    message: str = Field(default=f"답변 성공 ({VERSION})" if Log.is_debug_enable() else "답변 성공")
-    result: Union[ReActResponse, List[ApeResponse], str, List[Union[str, Dict[str, Any]]],
-    Dict[str, Union[str, Dict[str, str]]]] = Field(default={})
-    description: str = Field(default="답변 성공")

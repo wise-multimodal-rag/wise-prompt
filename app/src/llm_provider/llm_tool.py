@@ -10,7 +10,7 @@ from langchain_openai import ChatOpenAI
 
 from app.config import settings
 from app.constants import ModelOption
-from app.src.exception.service import InvalidLLMProviderNameError
+from app.exceptions.service import InvalidLLMProviderNameError
 
 
 def openai_model(model_name, temp: float = ModelOption.TEMPERATURE):
