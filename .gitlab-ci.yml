@@ -3,6 +3,7 @@ stages:
   - lint
   - test
   - build-and-push-app
+  - container_test
 
 include:
   - local: '.gitlab/ci/Secret-Detection.gitlab-ci.yml'
@@ -10,3 +11,4 @@ include:
   - local: '.gitlab/ci/Lint.gitlab-ci.yml'
   - local: '.gitlab/ci/Test.gitlab-ci.yml'
   - local: '.gitlab/ci/Build-and-Push-App.gitlab-ci.yml'
+  - local: '.gitlab/ci/Container-Scanning.gitlab-ci.yml'
