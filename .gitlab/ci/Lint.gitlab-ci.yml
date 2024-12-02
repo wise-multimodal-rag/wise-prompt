@@ -1,5 +1,3 @@
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-
 .lint:
   extends: .poetry
   stage: lint
