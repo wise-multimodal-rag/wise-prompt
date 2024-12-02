@@ -1,4 +1,5 @@
 stages:
+  - secret_detection
   - lint
   - test
   - build-and-push-app
