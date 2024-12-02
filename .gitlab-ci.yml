@@ -4,6 +4,7 @@ stages:
   - build-and-push-app
 
 include:
+  - local: '.gitlab/ci/Secret-Detection.gitlab-ci.yml'
   - local: '.gitlab/ci/Dependency-Management.gitlab-ci.yml'
   - local: '.gitlab/ci/Lint.gitlab-ci.yml'
   - local: '.gitlab/ci/Test.gitlab-ci.yml'
