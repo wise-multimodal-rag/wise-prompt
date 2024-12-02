@@ -21,8 +21,8 @@ from starlette.types import HTTPExceptionHandler
 
 from app import handlers
 from app.api.api_router import api_router
-from app.api.examples.main import description
 from app.config import settings
+from app.constants import DESCRIPTION, SUMMARY, LICENSE_INFO
 from app.dependencies import get_token_header
 from app.exceptions.base import ApplicationError
 from app.log import setup_logging
@@ -49,12 +49,10 @@ async def lifespan(lifespan_app: FastAPI):
 app = FastAPI(
     lifespan=lifespan,
     title=f"{settings.SERVICE_NAME}",
-    summary="AI플랫폼팀 Prompt Engineering 🚀",
-    description=description,
+    summary=SUMMARY,
+    description=DESCRIPTION,
     version=VERSION,
-    license_info={
-        "name": "Wisenut"
-    },
+    license_info=LICENSE_INFO,
     servers=settings.servers,
     root_path_in_servers=settings.root_path_in_servers,
     docs_url=None, redoc_url=None  # Serve the static files
