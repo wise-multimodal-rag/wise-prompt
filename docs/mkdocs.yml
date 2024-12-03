@@ -41,6 +41,7 @@ nav:
   - Guide:
     - Docker: './guide/docker.md'
     - Gunicorn: './guide/gunicorn.md'
+    - Pre-commit: './guide/pre-commit.md'
     - Secret Detection: './guide/secret-detection.md'
   - API Docs: './api/docs.html'
 
