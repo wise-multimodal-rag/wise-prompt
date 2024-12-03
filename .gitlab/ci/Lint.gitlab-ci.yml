@@ -1,4 +1,6 @@
 .lint:
+  tags:
+    - saas-linux-medium-amd64 # 16GB Memory, 50GB storage
   extends: .poetry
   stage: lint
   rules:
