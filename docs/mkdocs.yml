@@ -1,4 +1,4 @@
-site_name: Python FastAPI Template
+site_name: Wise Prompt
 site_dir: public
 theme:
   name: material
