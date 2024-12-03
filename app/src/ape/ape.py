@@ -4,7 +4,8 @@ from typing import List, Tuple
 
 from app.constants import APETemplate
 from app.schemas.ape import ApeResponse, ApeInputOutput
-from app.src.ape import generate, evaluate, config, template, data, llm
+from app.src.ape import generate, evaluate, config, data, llm
+from app.src.ape.config import template
 
 
 def get_simple_prompt_gen_template(prompt_gen_template, prompt_gen_mode):

@@ -1,4 +1,6 @@
 build-and-push-app:
+  tags:
+    - saas-linux-medium-amd64 # 16GB Memory, 50GB storage
   stage: build-and-push-app
   image: docker:24.0.5
   services:
