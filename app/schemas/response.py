@@ -11,7 +11,7 @@ class APIResponseModel(BaseModel):
     """기본 API 응답 포맷 by AIP Restful API 디자인 가이드"""
     code: int = Field(default=int(f"{settings.SERVICE_CODE}200"))  # 6자리 숫자 권장
     message: str = Field(
-        default=f"API Response Success ({VERSION})" if Log.is_debug_enable() else "API Response Success")
+        default=f"Wise Prompt Response Success ({VERSION})" if Log.is_debug_enable() else "Wise Prompt Response Success")
     result: Any = Field(default={})  # API response result
     description: str = Field(default="응답과 관련된 자세한 설명 작성")
 
