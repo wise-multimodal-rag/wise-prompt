@@ -34,7 +34,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
-fastapi = {extras = ["standard"], version = "^0.115.5"}
+fastapi = { extras = ["standard"], version = "^0.115.5" }
 loguru = "^0.7.2"
 pydantic = "^2.7.0"
 pyyaml = "^6.0.2"
@@ -87,7 +87,7 @@ exclude = [
 target-version = "py39"
 [tool.ruff.lint]
 select = ["D"]
-ignore = ['W', "D100", "D104", "D414", "D417"]
+ignore = ['W', "D100", "D104", "D105", "D414", "D415", "D417", "D107"]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 [tool.ruff.lint.extend-per-file-ignores]
@@ -96,13 +96,13 @@ convention = "google"
 "app/exceptions/*" = ["D"]
 "app/schemas/*" = ["D"]
 "app/utils/*" = ["D"]
-"app/version.py"= ["D"]
-"app/main.py"= ["D"]
-"app/log.py"= ["D"]
-"app/handlers.py"= ["D"]
-"app/dependencies.py"= ["D"]
-"app/constants.py"= ["D"]
-"app/config.py"= ["D"]
+"app/version.py" = ["D"]
+"app/main.py" = ["D"]
+"app/log.py" = ["D"]
+"app/handlers.py" = ["D"]
+"app/dependencies.py" = ["D"]
+"app/constants.py" = ["D"]
+"app/config.py" = ["D"]
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
@@ -134,7 +134,7 @@ exclude = [
 source = ["app"]
 omit = [
     "app/*.py",
-     "*/__init__.py",
+    "*/__init__.py",
     "app/api/examples/*.py",
     "app/exceptions/*.py",
 ]

@@ -3,7 +3,7 @@ import yaml
 
 
 def update_config(config, base_config='configs/default.yaml'):
-    # Get default config from yaml
+    """Get default config from yaml"""
     with open(os.path.join(os.path.dirname(__file__), base_config)) as f:
         default_config = yaml.safe_load(f)
 

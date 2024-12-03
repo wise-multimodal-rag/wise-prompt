@@ -9,6 +9,7 @@ from app.src.ape import evaluate
 
 
 def bandits_evaluator(prompts, eval_template, eval_data, demos_template, few_shot_data, config):
+    """Bandits Evaluator"""
     base_eval_method = evaluate.get_eval_method(config['base_eval_method'])
     bandit_algo = get_bandit_algo(
         config['bandit_method'], len(prompts), config)
@@ -25,17 +26,18 @@ def bandits_evaluator(prompts, eval_template, eval_data, demos_template, few_sho
         # Evaluate the sampled prompts
         sampled_eval_results = base_eval_method(sampled_prompts, eval_template, eval_data, demos_template,
                                                 few_shot_data, config['base_eval_config'])
-        _, scores = sampled_eval_results.in_place(method='mean')
+        _, scores = sampled_eval_results.in_place(method='mean')    # pyright: ignore
         # Update the bandit algorithm
         bandit_algo.update(sampled_prompts_idx, scores)
     return BanditsEvaluationResult(prompts, bandit_algo.get_scores(), bandit_algo.get_infos())
 
 
 def get_bandit_algo(bandit_method, num_prompts, config):
-    """
-    Returns the bandit method object.
+    """Returns the bandit method object.
+
     Parameters:
         bandit_method: The bandit method to use. ('epsilon-greedy')
+
     Returns:
         A bandit method object.
     """
@@ -46,6 +48,7 @@ def get_bandit_algo(bandit_method, num_prompts, config):
 
 
 class BanditsEvaluationResult(evaluate.EvaluationResult):
+    """Bandits Evaluation Result"""
 
     def __init__(self, prompts: List[str], scores, infos):
         self.prompts = prompts
@@ -83,12 +86,15 @@ class BanditsEvaluationResult(evaluate.EvaluationResult):
 
 
 class BatchBanditAlgo(ABC):
+    """Batch Bandit Algorithm"""
 
     @abstractmethod
     def choose(self, n):
         """Choose n prompts from the scores.
+
         Parameters:
             n: The number of prompts to choose.
+
         Returns:
             A list of indices of the chosen prompts.
         """
@@ -97,6 +103,7 @@ class BatchBanditAlgo(ABC):
     @abstractmethod
     def update(self, chosen, scores):
         """Update the scores for the chosen prompts.
+
         Parameters:
             chosen: A list of indices of the chosen prompts.
             scores: A list of scores for each chosen prompt in the form of a list.
@@ -111,6 +118,7 @@ class BatchBanditAlgo(ABC):
     @abstractmethod
     def get_scores(self):
         """Get the scores for all prompts.
+
         Returns:
             A list of scores.
         """
@@ -119,6 +127,7 @@ class BatchBanditAlgo(ABC):
     @abstractmethod
     def get_infos(self):
         """Get the infos for all prompts.
+
         Returns:
             A list of infos.
         """
@@ -126,6 +135,7 @@ class BatchBanditAlgo(ABC):
 
 
 class CountAverageBanditAlgo(BatchBanditAlgo):
+    """Count Average Bandit Algorithm"""
 
     def __init__(self, num_prompts, num_samples):
         self.num_prompts = num_prompts
@@ -133,26 +143,30 @@ class CountAverageBanditAlgo(BatchBanditAlgo):
         self.reset()
 
     def update(self, chosen, scores):
+        """Update"""
         for i, score in zip(chosen, scores):
             self.counts[i] += self.num_samples
             self.scores[i] += score * self.num_samples
 
     def reset(self):
+        """Reset"""
         self.counts = np.zeros(self.num_prompts)
         self.scores = np.zeros(self.num_prompts)
 
     def get_scores(self):
-        # Some counts may be 0, so we need to avoid division by 0.
+        """Some counts may be 0, so we need to avoid division by 0."""
         return np.divide(self.scores, self.counts, out=np.zeros_like(self.scores), where=self.counts != 0)
 
 
 class UCBBanditAlgo(CountAverageBanditAlgo):
+    """UCB Bandit Algorithm"""
 
     def __init__(self, num_prompts, num_samples, c):
         super().__init__(num_prompts, num_samples)
         self.c = c
 
     def choose(self, n):
+        """Choose."""
         if np.sum(self.counts) == 0:
             # If all counts are 0, choose randomly.
             return random.sample(range(self.num_prompts), n)
@@ -163,4 +177,5 @@ class UCBBanditAlgo(CountAverageBanditAlgo):
         return np.argsort(ucb_scores)[::-1][:n]
 
     def get_infos(self):
+        """Get infors."""
         return self.counts

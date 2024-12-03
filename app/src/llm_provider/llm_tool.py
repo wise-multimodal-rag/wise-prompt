@@ -1,4 +1,5 @@
-"""
+"""TODO list.
+
 TODO: ollama 환경변수 설정 or MODELFILE
 https://github.com/ollama/ollama/blob/main/docs/modelfile.md#valid-parameters-and-values
 TODO: ChatOllama vs Ollama
@@ -14,17 +15,46 @@ from app.exceptions.service import InvalidLLMProviderNameError
 
 
 def openai_model(model_name, temp: float = ModelOption.TEMPERATURE):
+    """Setting OpenAI model.
+
+    Args:
+        model_name:
+        temp:
+
+    Returns:
+
+    """
     client = ChatOpenAI(model=model_name, temperature=temp)
     return client
 
 
 def ollama_model(model_name: str, temp: float = ModelOption.TEMPERATURE, k: float = ModelOption.TOP_K):
+    """Setting ollama model.
+
+    Args:
+        model_name:
+        temp:
+        k:
+
+    Returns:
+
+    """
     client = ChatOllama(base_url=settings.OLLAMA_BASE_URL,
                         model=model_name, temperature=temp, top_k=k)  # pyright: ignore
     return client
 
 
 def model_setting(llm_tool: str, model_name: str, temp: float = ModelOption.TEMPERATURE):
+    """Model settings (ollama, openai).
+
+    Args:
+        llm_tool:
+        model_name:
+        temp:
+
+    Returns:
+
+    """
     model = ollama_model(model_name)  # default
     if llm_tool.lower() == 'ollama':
         model = ollama_model(model_name, temp)

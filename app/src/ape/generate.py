@@ -2,12 +2,13 @@ from app.src.ape import data, llm
 
 
 def get_query(prompt_gen_template, demos_template, subsampled_data):
-    """
-    Returns a query for the prompt generator. A query is the prompt that is sent to the LLM.
+    """Returns a query for the prompt generator. A query is the prompt that is sent to the LLM.
+
     Parameters:
         prompt_gen_template: The template for the prompt generator queries.
         demos_template: The template for the demonstrations.
         subsampled_data: The data to use for the demonstrations.
+
     Returns:
         A query for the prompt generator.
     """
@@ -17,13 +18,14 @@ def get_query(prompt_gen_template, demos_template, subsampled_data):
 
 
 def generate_prompts(prompt_gen_template, demos_template, prompt_gen_data, config):
-    """
-    Generates prompts using the prompt generator.
+    """Generates prompts using the prompt generator.
+
     Parameters:
         prompt_gen_template: The template for the prompt generator queries.
         demos_template: The template for the demonstrations.
         prompt_gen_data: The data to use for prompt generation.
         config: The configuration dictionary.
+
     Returns:
         A list of prompts.
     """

@@ -8,6 +8,7 @@ from app.src.ape import generate, evaluate, config, template, data, llm
 
 
 def get_simple_prompt_gen_template(prompt_gen_template, prompt_gen_mode):
+    """Get Simple Prompt Generation Template"""
     if prompt_gen_template is None:
         if prompt_gen_mode == 'forward':
             prompt_gen_template = APETemplate.PROMPT_GENERATE_TEMPLATE
@@ -24,8 +25,8 @@ def simple_ape(
         prompt_gen_template=None, prompt_gen_model: str = 'gpt-4o-mini', eval_model: str = 'gpt-4o-mini',
         prompt_gen_mode: str = 'forward', num_prompts: int = 50, eval_rounds: int = 10,
         prompt_gen_batch_size: int = 200, eval_batch_size: int = 500):
-    """
-    Function that wraps the find_prompts function to make it easier to use.
+    """Function that wraps the find_prompts function to make it easier to use.
+
     Design goals: include default values for most parameters, and automatically
     fill out the config dict for the user in a way that fits almost all use cases.
 
@@ -60,8 +61,8 @@ def simple_ape(
 def simple_eval(
         dataset, prompts, eval_template=APETemplate.ZERO_SHOT_EVALUATION, demos_template=APETemplate.DEMO_TEMPLATE,
         eval_model='gpt-4o-mini', num_samples=50):
-    """
-    Function that wraps the evaluate_prompts function to make it easier to use.
+    """Function that wraps the evaluate_prompts function to make it easier to use.
+
     Parameters:
         dataset: The dataset to use for evaluation.
         prompts: The list of prompts to evaluate.
@@ -87,6 +88,7 @@ def simple_estimate_cost(
         prompt_gen_template=None, demos_template=APETemplate.DEMO_TEMPLATE,
         eval_model='gpt-4o-mini', prompt_gen_model='gpt-4o-mini', prompt_gen_mode='forward',
         num_prompts=50, eval_rounds=10, prompt_gen_batch_size=200, eval_batch_size=500):
+    """Simple Estimate Cost func"""
     prompt_gen_template = get_simple_prompt_gen_template(prompt_gen_template, prompt_gen_mode)
     conf = config.simple_config(eval_model, prompt_gen_model, prompt_gen_mode, num_prompts, eval_rounds,
                                 prompt_gen_batch_size, eval_batch_size)
@@ -95,8 +97,8 @@ def simple_estimate_cost(
 
 def find_prompts(eval_template, demos_template, prompt_gen_data, eval_data, conf, base_conf='configs/default.yaml',
                  few_shot_data=None, prompt_gen_template=None):
-    """
-    Function to generate prompts using APE.
+    """Function to generate prompts using APE.
+
     Parameters:
         eval_template: The template for the evaluation queries.
         demos_template: The template for the demos.
@@ -106,6 +108,7 @@ def find_prompts(eval_template, demos_template, prompt_gen_data, eval_data, conf
         base_conf:
         few_shot_data: The data to use for demonstrations during eval (not implemented yet).
         prompt_gen_template: The template to use for prompt generation.
+
     Returns:
         An evaluation result. Also returns a function to evaluate the prompts with new inputs.
     """
@@ -138,8 +141,8 @@ def find_prompts(eval_template, demos_template, prompt_gen_data, eval_data, conf
 
 def evaluate_prompts(prompts, eval_template, eval_data, demos_template, few_shot_data, conf,
                      base_conf='configs/default.yaml'):
-    """
-    Function to evaluate a list of prompts.
+    """Function to evaluate a list of prompts.
+
     Parameters:
         prompts: The list of prompts to evaluate.
         eval_template: The template for the evaluation queries.
@@ -148,10 +151,10 @@ def evaluate_prompts(prompts, eval_template, eval_data, demos_template, few_shot
         demos_template:
         conf: The configuration dictionary.
         base_conf: The base configuration file.
+
     Returns:
         A list of prompts and their scores, sorted by score.
     """
-
     conf = config.update_config(conf, base_conf)
     # Generate prompts
     eval_template = template.EvalTemplate(eval_template)
@@ -165,6 +168,7 @@ def evaluate_prompts(prompts, eval_template, eval_data, demos_template, few_shot
 
 def estimate_cost(eval_template, demos_template, prompt_gen_data, eval_data, conf, base_conf='configs/default.yaml',
                   few_shot_data=None, prompt_gen_template=None, eval_query=None):
+    """Estimate Cost"""
     conf = config.update_config(conf, base_conf)
     max_prompt_len = conf['generation']['model']['gpt_config']['max_tokens']
     num_prompts = conf['generation']['num_prompts_per_subsample'] * \
@@ -207,7 +211,7 @@ def estimate_cost(eval_template, demos_template, prompt_gen_data, eval_data, con
 
 
 def get_generation_query(eval_template, demos_template, conf, prompt_gen_data, prompt_gen_template=None, num_query=1):
-    # Generate prompts
+    """Generate prompts"""
     eval_template = template.EvalTemplate(eval_template)
     demos_template = template.DemosTemplate(demos_template)
     if prompt_gen_template is None:
@@ -224,6 +228,7 @@ def get_generation_query(eval_template, demos_template, conf, prompt_gen_data, p
 
 
 def get_evaluation_query(eval_template, demos_template, conf, eval_data, few_shot_data, eval_query=None, num_query=1):
+    """Get Evaluation Query"""
     eval_template = template.EvalTemplate(eval_template)
     demos_template = template.DemosTemplate(demos_template)
 
@@ -256,6 +261,7 @@ def get_evaluation_query(eval_template, demos_template, conf, eval_data, few_sho
 
 def ape(prompt_gen_data: ApeInputOutput, eval_data: ApeInputOutput, prompt_gen_model: str, eval_model: str,
         num_prompts: int, eval_rounds: int, prompt_gen_batch_size: int, eval_batch_size: int):
+    """APE"""
     result, demo_fn = simple_ape(
         prompt_gen_data=(prompt_gen_data.inputs, prompt_gen_data.outputs),
         eval_data=(eval_data.inputs, eval_data.outputs),

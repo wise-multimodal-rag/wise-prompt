@@ -2,9 +2,7 @@ import random
 
 
 def subsample_data(data, subsample_size):
-    """
-    Subsample data. Data is in the form of a tuple of lists.
-    """
+    """Subsample data. Data is in the form of a tuple of lists."""
     inputs, outputs = data
     assert len(inputs) == len(outputs)
     indices = random.sample(range(len(inputs)), subsample_size)
@@ -14,9 +12,7 @@ def subsample_data(data, subsample_size):
 
 
 def create_split(data, split_size):
-    """
-    Split data into two parts. Data is in the form of a tuple of lists.
-    """
+    """Split data into two parts. Data is in the form of a tuple of lists."""
     inputs, outputs = data
     assert len(inputs) == len(outputs)
     indices = random.sample(range(len(inputs)), split_size)

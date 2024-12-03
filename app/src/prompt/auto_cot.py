@@ -13,13 +13,12 @@ from app.src.llm_provider.llm_tool import model_setting
 
 
 def get_cot_dataset(dataset_path):
-    """
+    """Get CoT Dataset from local dir.
 
     Args:
         dataset_path:
 
     Returns:
-
     # TODO: 도메인별 데이터셋 설정, 미리 예제 생성? 사용자에게 직접 파일로 받아오기?
     """
     corpus = []
@@ -51,6 +50,17 @@ def get_cot_dataset(dataset_path):
 
 
 def kmeans_clustering(num_clusters, corpus, corpus_embeddings, random_seed):
+    """Kmeans Clustering.
+
+    Args:
+        num_clusters:
+        corpus:
+        corpus_embeddings:
+        random_seed:
+
+    Returns:
+
+    """
     clustering_model = KMeans(n_clusters=num_clusters, random_state=random_seed)
     # 각 문장이 할당된 클러스터를 나타내는 레이블 리스트 저장
     clustering_model.fit(corpus_embeddings)
@@ -74,6 +84,19 @@ def kmeans_clustering(num_clusters, corpus, corpus_embeddings, random_seed):
 
 def get_cluster_center(clustered_dists, clustered_idx, rationale, pred_ans, question, max_ra_len) -> List[
     Dict[str, str]]:
+    """Get Cluster Center.
+
+    Args:
+        clustered_dists:
+        clustered_idx:
+        rationale:
+        pred_ans:
+        question:
+        max_ra_len:
+
+    Returns:
+
+    """
     sampling_method = "center"
     task = "multiarith"  # TODO: 태스크 설정
     demos = []
@@ -111,12 +134,33 @@ def get_cluster_center(clustered_dists, clustered_idx, rationale, pred_ans, ques
 
 
 def embeddings(corpus, encoder_name):
+    """Embedding func.
+
+    Args:
+        corpus:
+        encoder_name:
+
+    Returns:
+
+    """
     encoder = SentenceTransformer(encoder_name)
     corpus_embeddings = encoder.encode(corpus)
     return corpus_embeddings
 
 
 def question_clustering(domain: str, encoder_name, n_clusters, random_seed, max_ra_len):
+    """Clustering questions.
+
+    Args:
+        domain:
+        encoder_name:
+        n_clusters:
+        random_seed:
+        max_ra_len:
+
+    Returns:
+
+    """
     # TODO: demonstration&answer dataset 어떻게 받을지, 형식 지정?,
     dataset_path = f"./dataset/{domain.replace(' ', '_')}_zero_shot_cot.log"
     if not Path(dataset_path).exists():
@@ -130,6 +174,17 @@ def question_clustering(domain: str, encoder_name, n_clusters, random_seed, max_
 
 
 def demonstration_sampling(demos: List[Dict[str, str]], system_prompt, prompt, llm_provider):
+    """Sampling.
+
+    Args:
+        demos:
+        system_prompt:
+        prompt:
+        llm_provider:
+
+    Returns:
+
+    """
     examples = [f"""{demo['question']} {demo['rationale']} The answer is {demo['pred_ans']}""" for demo in demos]
     logging.debug(f"Question {examples=}")
     model = model_setting(llm_provider.llm_tool, llm_provider.model, llm_provider.temperature)
@@ -143,6 +198,21 @@ def demonstration_sampling(demos: List[Dict[str, str]], system_prompt, prompt, l
 
 def auto_cot_prompt(domain: str, system_prompt, prompt, llm_provider: LLMProviderRequest, encoder, n_clusters,
                     random_seed, max_ra_len):
+    """Auto CoT Prompt.
+
+    Args:
+        domain:
+        system_prompt:
+        prompt:
+        llm_provider:
+        encoder:
+        n_clusters:
+        random_seed:
+        max_ra_len:
+
+    Returns:
+
+    """
     demos: List[Dict[str, str]] = question_clustering(domain, encoder, n_clusters, random_seed, max_ra_len)
     answer = demonstration_sampling(demos, system_prompt, prompt, llm_provider)
     return answer
