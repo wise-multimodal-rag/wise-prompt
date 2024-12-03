@@ -39,6 +39,8 @@ nav:
   - Quick Start: './start/quick-start.md'
   - Getting Started: './start/getting-started.md'
   - Guide:
+    - Docker: './guide/docker.md'
+    - Gunicorn: './guide/gunicorn.md'
     - Secret Detection: './guide/secret-detection.md'
   - API Docs: './api/docs.html'
 
