@@ -1,12 +1,12 @@
 venv
-docs/
 logs/
 .gitlab
 .idea
 *cfg
+.triage-policies.yml
 
 **/__pycache__
-/usr/local/lib/python3.10/site-packages/__pycache__
+**/site-packages/__pycache__
 **/*.pyc
 **/*.pyo
 **/*.pyd
@@ -23,6 +23,5 @@ coverage.xml
 *,cover
 **/*.log
 .git
-.mypy_cache
 .pytest_cache
 .ruff_cache

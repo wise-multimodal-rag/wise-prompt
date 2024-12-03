@@ -2,7 +2,7 @@ import json
 
 
 class ApplicationError(Exception):
-    """Application 구동 불가 에러"""
+    """Application 내에서 발생하는 에러 포맷"""
 
     def __init__(self, code: int, message: str, result):
         self.code = code
@@ -16,3 +16,10 @@ class ApplicationError(Exception):
             "result": self.result
         }
         return json.dumps(exception_data, indent=4, ensure_ascii=False)
+
+    def to_dict(self):
+        return {
+            "code": self.code,
+            "message": self.message,
+            "result": self.result
+        }

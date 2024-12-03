@@ -3,7 +3,7 @@ from time import time
 import pytest
 from tabulate import tabulate
 
-from app.docs.prompt import ollama_default_example
+from app.api.examples.prompt import ollama_default_example
 
 test_durations = []
 

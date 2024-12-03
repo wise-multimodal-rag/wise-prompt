@@ -33,6 +33,7 @@ class LLM(ABC):
     @abstractmethod
     def generate_text(self, prompt, n):
         """Generates text from the model.
+
         Parameters:
             prompt: The prompt to use. This can be a string or a list of strings.
             n:
@@ -44,10 +45,12 @@ class LLM(ABC):
     @abstractmethod
     def log_probs(self, text, log_prob_range):
         """Returns the log probs of the text.
+
         Parameters:
             text: The text to get the log probs of. This can be a string or a list of strings.
             log_prob_range: The range of characters within each string to get the log_probs of. 
                 This is a list of tuples of the form (start, end).
+
         Returns:
             A list of log probs.
         """
@@ -65,6 +68,7 @@ class GPT_Forward(LLM):
         self.client = OpenAI()
 
     def confirm_cost(self, texts, n, max_tokens):
+        """Confirm Cost."""
         total_estimated_cost = 0
         for text in texts:
             total_estimated_cost += gpt_get_estimated_cost(self.config, text, max_tokens) * n
@@ -85,6 +89,7 @@ class GPT_Forward(LLM):
             return self.auto_reduce_n(fn, prompt, n // 2) + self.auto_reduce_n(fn, prompt, n // 2)
 
     def generate_text(self, prompt, n):
+        """Generate Text."""
         if not isinstance(prompt, list):
             prompt = [prompt]
         if self.needs_confirmation:
@@ -254,6 +259,7 @@ class GPT_Forward(LLM):
 
 
 class GPT_Insert(LLM):
+    """GPT Insert."""
 
     def __init__(self, config, needs_confirmation=False, disable_tqdm=True):
         """Initializes the model."""
@@ -263,6 +269,7 @@ class GPT_Insert(LLM):
         self.client = OpenAI()
 
     def confirm_cost(self, texts, n, max_tokens):
+        """Confirm Cost."""
         total_estimated_cost = 0
         for text in texts:
             total_estimated_cost += gpt_get_estimated_cost(
@@ -284,6 +291,7 @@ class GPT_Insert(LLM):
             return self.auto_reduce_n(fn, prompt, n // 2) + self.auto_reduce_n(fn, prompt, n // 2)
 
     def generate_text(self, prompt, n):
+        """Generate Text."""
         if not isinstance(prompt, list):
             prompt = [prompt]
         if self.needs_confirmation:
@@ -301,6 +309,7 @@ class GPT_Insert(LLM):
         return text
 
     def log_probs(self, text, log_prob_range=None):
+        """Log probs."""
         raise NotImplementedError
 
     def __generate_text(self, prompt, n):
@@ -348,4 +357,5 @@ def gpt_get_estimated_cost(config, prompt, max_tokens):
 
 
 class BatchSizeException(Exception):
+    """Batch size exception."""
     pass

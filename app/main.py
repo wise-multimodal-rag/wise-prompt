@@ -3,11 +3,12 @@ import logging
 import os
 import sys
 import time
+import typing
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
 import uvicorn
-from fastapi import Depends, FastAPI, Request, status
+from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.docs import get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html, get_redoc_html
 from fastapi.responses import RedirectResponse
@@ -16,14 +17,15 @@ from loguru import logger
 from pydantic import ValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import JSONResponse
+from starlette.types import HTTPExceptionHandler
 
+from app import handlers
+from app.api.api_router import api_router
 from app.config import settings
+from app.constants import DESCRIPTION, SUMMARY, LICENSE_INFO
 from app.dependencies import get_token_header
-from app.docs.main import description
+from app.exceptions.base import ApplicationError
 from app.log import setup_logging
-from app.routers import prompt, ape
-from app.src.exception.service import WisePromptServiceError
 from app.version import GIT_REVISION, GIT_BRANCH, BUILD_DATE, GIT_SHORT_REVISION, VERSION, get_current_datetime
 
 # 앱 구동 성공 여부와 상관없이 앱 정보 출력
@@ -47,19 +49,24 @@ async def lifespan(lifespan_app: FastAPI):
 app = FastAPI(
     lifespan=lifespan,
     title=f"{settings.SERVICE_NAME}",
-    summary="AI플랫폼팀 Prompt Engineering 🚀",
-    description=description,
+    summary=SUMMARY,
+    description=DESCRIPTION,
     version=VERSION,
-    license_info={
-        "name": "Wisenut"
-    },
+    license_info=LICENSE_INFO,
+    servers=settings.servers,
+    root_path_in_servers=settings.root_path_in_servers,
     docs_url=None, redoc_url=None  # Serve the static files
 )
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.logger = setup_logging()  # type: ignore
 
-app.include_router(prompt.router, dependencies=[Depends(get_token_header)])
-app.include_router(ape.router, dependencies=[Depends(get_token_header)])
+app.include_router(api_router, dependencies=[Depends(get_token_header)])
+
+app.add_exception_handler(StarletteHTTPException, typing.cast(HTTPExceptionHandler, handlers.http_exception_handler))
+app.add_exception_handler(RequestValidationError,
+                          typing.cast(HTTPExceptionHandler, handlers.request_validation_exception_handler))
+app.add_exception_handler(ValidationError, typing.cast(HTTPExceptionHandler, handlers.validation_exception_handler))
+app.add_exception_handler(ApplicationError, typing.cast(HTTPExceptionHandler, handlers.application_error_handler))
 
 
 @app.middleware("http")
@@ -96,54 +103,6 @@ async def add_request_id(request: Request, call_next):
         response.headers['X-Request-ID'] = request_id  # response.header 에 추가 --> client 가 로그 추적 가능
         # logging.debug(f"End Request") # 요청 로직 종료: 필요할 경우 사용
     return response
-
-
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
-    status_code = int(f"{settings.SERVICE_CODE}{exc.status_code}")
-    if exc.status_code == 404:
-        return JSONResponse(
-            status_code=200, content={
-                "code": status_code, "message": "Invalid URL. see api-doc `/docs` or `/openapi.json`",
-                "result": {"detail": exc.detail},
-            }
-        )
-    return JSONResponse(
-        status_code=200, content={
-            "code": status_code, "message": f"{exc.detail}", "result": {"headers": exc.headers}
-        }
-    )
-
-
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=200, content={
-            "code": int(f"{settings.SERVICE_CODE}{status.HTTP_422_UNPROCESSABLE_ENTITY}"),
-            "message": f"Invalid Request: {exc.errors()[0]['msg']} (type: {exc.errors()[0]['type']}), "
-                       f"Check {(exc.errors()[0]['loc'])}",
-            "result": {"body": exc.body}
-        }
-    )
-
-
-@app.exception_handler(ValidationError)
-async def request_validation_exception_handler(request: Request, exc: ValidationError):
-    return JSONResponse(
-        status_code=200, content={
-            "code": int(f"{settings.SERVICE_CODE}{status.HTTP_422_UNPROCESSABLE_ENTITY}"),
-            "message": "pydantic llm_provider ValidationError 발생",
-            "result": {"body": exc.errors()}
-        }
-    )
-
-
-@app.exception_handler(WisePromptServiceError)
-async def custom_exception_handler(request: Request, exc: WisePromptServiceError):
-    logging.error(f"{request.client} {request.method} {request.url} → {repr(exc)}")
-    return JSONResponse(
-        status_code=200, content={"code": int(exc.code), "message": f"{exc.message}", "result": exc.result}
-    )
 
 
 @app.get('/')

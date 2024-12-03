@@ -4,10 +4,11 @@ from app.src.ape import llm
 
 
 def get_eval_method(eval_method):
-    """
-    Returns the evaluation method object.
+    """Returns the evaluation method object.
+
     Parameters:
         eval_method: The evaluation method to use. ('likelihood')
+
     Returns:
         An evaluation method object.
     """
@@ -24,14 +25,15 @@ def get_eval_method(eval_method):
 
 
 def evalute_prompts(prompts, eval_template, eval_data, demos_template, few_shot_data, eval_method, config):
-    """
-    Returns the scores for a list of prompts.
+    """Returns the scores for a list of prompts.
+
     Parameters:
         prompts: A list of prompts.
         eval_template: The template for the evaluation queries.
         eval_data: The data to use for evaluation.
         eval_method: The evaluation method to use. ('likelihood')
         config: The configuration dictionary.
+
     Returns:
         An evaluation result object.
     """
@@ -40,11 +42,12 @@ def evalute_prompts(prompts, eval_template, eval_data, demos_template, few_shot_
 
 
 def demo_function(eval_template, config):
-    """
-    Returns a function that can be manually test the LLM with a chosen prompt.
+    """Returns a function that can be manually test the LLM with a chosen prompt.
+
     Parameters:
         eval_template: The template for the evaluation queries.
         config: The configuration dictionary.
+
     Returns:
         A function that takes a prompt and returns a demo.
     """
@@ -64,11 +67,14 @@ def demo_function(eval_template, config):
 
 
 class EvaluationResult(ABC):
+    """Evaluation Result ABC Class"""
 
     @abstractmethod
     def sorted(self, method='default'):
         """Get the results in the form of a sorted prompt and score list.
-        Has a method argument to support sorting by various metrics."""
+
+        Has a method argument to support sorting by various metrics.
+        """
         pass
 
     @abstractmethod

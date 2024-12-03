@@ -14,10 +14,7 @@ authors = [
     "Seoyeon Park <sally9476@wisenut.co.kr>"
 ]
 maintainers = [
-    "Moonjong Kim <penbell@wisenut.co.kr>",
-    "Chanhyeong Lee <wisnt65@wisenut.co.kr>",
-    "Seoyeon Park <sally9476@wisenut.co.kr>",
-    "Joongheon Jeong <legagain@wisenut.co.kr>"
+    "Seoyeon Park <sally9476@wisenut.co.kr>"
 ]
 description = "AIP Team Wise Prompt Engineering API"
 readme = "README.md"
@@ -37,28 +34,28 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
-fastapi = "0.111.0"
+fastapi = { extras = ["standard"], version = "^0.115.5" }
 loguru = "^0.7.2"
 pydantic = "^2.7.0"
-pyyaml = "^6.0.1"
-uvicorn = "^0.30.5"
-pydantic-settings = "^2.2.1"
+pyyaml = "^6.0.2"
 langchain-ollama = "^0.1.0"
 langchain = "^0.2.11"
 langchain-community = "^0.2.10"
-openai = "^1.37.1"
+openai = "^1.56.0"
 langchain-openai = "^0.1.17"
 langchainhub = "^0.1.20"
 langchain-huggingface = "^0.0.3"
 wikipedia = "^1.4.0"
-numexpr = "^2.10.1"
-duckduckgo-search = "^6.2.6"
+numexpr = "^2.10.2"
+duckduckgo-search = "^6.3.7"
+pydantic-settings = "^2.6.1"
+uvicorn = "^0.32.1"
 
 
 [tool.poetry.group.lint.dependencies]
-ruff = "^0.6.1"
+ruff = "^0.8.1"
 mypy = "^1.11.1"
-pyright = "^1.1.376"
+pyright = "^1.1.389"
 
 [tool.poetry.group.test.dependencies]
 httpx = "^0.27.0"
@@ -67,7 +64,7 @@ pytest-cov = "^5.0.0"
 tabulate = "^0.9.0"
 
 [tool.poetry.group.gunicorn.dependencies]
-gunicorn = "^22.0.0"
+gunicorn = "^23.0.0"
 
 [tool.setuptools]
 py-modules = ["app"]
@@ -78,7 +75,6 @@ line-length = 125
 exclude = [
     '.git',
     '__pycache__',
-    '.mypy_cache',
     '.ruff_cache',
     'docs',
     'venv',
@@ -86,64 +82,42 @@ exclude = [
     'build',
     'dist',
     './app/__init__.py',
-    'gunicorn.conf.py',
-    'dataset',
-    'demos',
+    'gunicorn.conf.py'
 ]
 target-version = "py39"
 [tool.ruff.lint]
-ignore = ['W']
+select = ["D"]
+ignore = ['W', "D100", "D104", "D105", "D414", "D415", "D417", "D107"]
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+[tool.ruff.lint.extend-per-file-ignores]
+# app/src 디렉토리에서만 `D` 규칙 적용, <https://docs.astral.sh/ruff/rules/#pydocstyle-d>
+"app/api/*" = ["D"]
+"app/exceptions/*" = ["D"]
+"app/schemas/*" = ["D"]
+"app/utils/*" = ["D"]
+"app/version.py" = ["D"]
+"app/main.py" = ["D"]
+"app/log.py" = ["D"]
+"app/handlers.py" = ["D"]
+"app/dependencies.py" = ["D"]
+"app/constants.py" = ["D"]
+"app/config.py" = ["D"]
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.mypy]
-plugins = [
-    'pydantic.mypy'
-]
-python_version = "3.9"
-follow_imports = "skip"
-warn_redundant_casts = true
-warn_unused_ignores = false # true시 ignore 처리 error로 뜨게 함
-disallow_any_generics = true
-check_untyped_defs = true
-no_implicit_reexport = true
-warn_return_any = true
-warn_unused_configs = true
-exclude = [
-    '.git',
-    '__pycache__',
-    '.mypy_cache',
-    '.ruff_cache',
-    'docs',
-    'venv',
-    'tests',
-    'build',
-    'dist',
-    'gunicorn.conf.py'
-]
-[tool.pydantic-mypy]
-init_forbid_extra = true
-init_typed = true
-warn_required_dynamic_aliases = true
-[[tool.mypy.overrides]]
-module = [
-    "kiwipiepy",
-    "keybert",
-    "toml",
-    "yaml",
-    "version_info",
-    "sklearn.cluster",
-    "tqdm"
-]
-ignore_missing_imports = true
-
 
 [tool.pyright]
+pythonVersion = "3.9"
+defineConstant = { DEBUG = true }
+reportMissingImports = false
+reportMissingTypeStubs = false
+reportArgumentType = false
+typeCheckingMode = "basic"
 include = ["app"]
 exclude = [
     '.git',
     '__pycache__',
-    '.mypy_cache',
     '.ruff_cache',
     '.pytest_cache',
     'docs',
@@ -155,8 +129,12 @@ exclude = [
     'logs',
     'gunicorn.conf.py'
 ]
-defineConstant = { DEBUG = true }
-reportMissingImports = true
-reportMissingTypeStubs = false
-typeCheckingMode = "basic"
-pythonVersion = "3.9"
+
+[tool.coverage.run]
+source = ["app"]
+omit = [
+    "app/*.py",
+    "*/__init__.py",
+    "app/api/examples/*.py",
+    "app/exceptions/*.py",
+]

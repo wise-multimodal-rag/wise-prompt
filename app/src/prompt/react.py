@@ -7,12 +7,21 @@ from langchain_community.utilities import WikipediaAPIWrapper, DuckDuckGoSearchA
 from langchain_core.agents import AgentAction
 
 from app.constants import PromptTemplate, MagicSentence
-from app.models import LLMProviderRequest
-from app.src.exception.service import InvalidReActToolError
+from app.schemas.prompt import LLMProviderRequest
+from app.exceptions.service import InvalidReActToolError
 from app.src.llm_provider.llm_tool import model_setting
 
 
 def setting_search_tool(tool_name, top_k_search_result):
+    """Search tool settings.
+
+    Args:
+        tool_name:
+        top_k_search_result:
+
+    Returns:
+
+    """
     if tool_name.lower() == 'wikipedia':
         tools = [WikipediaQueryRun(
             api_wrapper=WikipediaAPIWrapper(lang="kr", top_k_results=top_k_search_result))]  # pyright: ignore
@@ -26,7 +35,8 @@ def setting_search_tool(tool_name, top_k_search_result):
 
 def react_prompt(system_prompt, prompt, llm_provider: LLMProviderRequest, tool_name: str, top_k_search_result: int,
                  max_iterations: int):
-    """
+    """ReAct Prompt.
+
     # TODO: 직접 구현한 검색기 및 정보 제공기를 툴로 사용
     # TODO: langchain 없이 react 직접 구현 (현재 Ollama를 사용할 경우, 거의 응답하지 못함)
     langchain search tools: https://python.langchain.com/v0.2/docs/integrations/tools/#search-tools

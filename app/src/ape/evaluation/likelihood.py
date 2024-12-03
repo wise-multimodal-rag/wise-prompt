@@ -6,13 +6,14 @@ special_output_token = '[[[[OUTPUT]]]]'
 
 
 def get_query(prompt, eval_template, input_, output_, demo_data, demos_template):
-    """
-    Returns the text sent to the LLM for likelihood evaluation.
+    """Returns the text sent to the LLM for likelihood evaluation.
+
     Parameters:
         prompt: The prompt.
         eval_template: The template for the evaluation queries.
         input_: The input.
         output_: The output.
+
     Returns:
         The query for the LLM and the range of the output text in the form of (start_idx, end_idx).
     """
@@ -25,13 +26,14 @@ def get_query(prompt, eval_template, input_, output_, demo_data, demos_template)
 
 
 def likelihood_evaluator(prompts, eval_template, eval_data, demos_template, few_shot_data, config):
-    """
-    For each prompt, evaluate the likelihood of the data (output) given the prompt.
+    """For each prompt, evaluate the likelihood of the data (output) given the prompt.
+
     Parameters:
         prompts: A list of prompts.
         eval_template: The template for the evaluation queries.
         eval_data: The data to use for evaluation.
         config: The configuration dictionary.
+
     Returns:
         A LikelihoodEvaluationResult object.
     """
@@ -53,9 +55,9 @@ def likelihood_evaluator(prompts, eval_template, eval_data, demos_template, few_
 
 
 class LikelihoodEvaluationResult(evaluate.EvaluationResult):
-    """
-    A class for storing the results of a likelihood evaluation. Supports
-    sorting prompts by various statistics of the likelihoods.
+    """A class for storing the results of a likelihood evaluation
+
+    Supports sorting prompts by various statistics of the likelihoods.
     """
 
     def __init__(self, prompts, log_probs, num_samples):
@@ -73,7 +75,7 @@ class LikelihoodEvaluationResult(evaluate.EvaluationResult):
         return prompt_log_probs
 
     def _agg_likelihoods(self, method):
-        """For each prompt, compute a statistic of the likelihoods (e.g., mean, median, etc.)"""
+        """For each prompt, compute a statistic of the likelihoods (e.g., mean, median, etc.)."""
         if method == 'mean':
             return [np.mean(lps) for lps in self.prompt_log_probs]
         elif method == 'median':
@@ -90,6 +92,7 @@ class LikelihoodEvaluationResult(evaluate.EvaluationResult):
             raise ValueError(f'Unknown method {method} for aggregating likelihoods')
 
     def sorted(self, method='default'):
+        """Sort."""
         if method == 'default':
             scores = self._agg_likelihoods('mean')
         else:
@@ -103,6 +106,7 @@ class LikelihoodEvaluationResult(evaluate.EvaluationResult):
         return sorted_prompts, sorted_scores
 
     def in_place(self, method='default'):
+        """In place."""
         if method == 'default':
             scores = self._agg_likelihoods('mean')
         else:
@@ -110,6 +114,7 @@ class LikelihoodEvaluationResult(evaluate.EvaluationResult):
         return self.prompts, scores
 
     def __str__(self):
+        """Str."""
         s = ''
         prompts, scores = self.sorted()
         s += 'log(p): prompt\n'

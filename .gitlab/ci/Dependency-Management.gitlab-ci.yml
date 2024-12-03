@@ -1,0 +1,34 @@
+.dependency-management:
+  image: python:3.9.13-slim
+  variables:
+    POETRY_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pypoetry"
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    PIPELINE_SEQUENCE: $CI_PIPELINE_IID
+    TZ: "Asia/Seoul"
+    FF_TIMESTAMPS: true
+  cache:
+    paths:
+      - .cache/pip
+      - venv
+      - .cache/pypoetry
+      - .ruff_cache/
+      - .cache/pytest_cache
+
+.pip:
+  extends: .dependency-management
+  before_script:
+    - echo "Running before_script tasks for $CI_JOB_NAME";
+    - python3 -V
+    - pip install --upgrade pip
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+
+.poetry:
+  extends: .dependency-management
+  before_script:
+    - echo "Running before_script tasks for $CI_JOB_NAME";
+    - python3 -V
+    - pip install --upgrade pip && pip install poetry
+    - poetry config virtualenvs.create false --local
+    - poetry install --no-root
