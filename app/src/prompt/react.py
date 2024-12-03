@@ -7,7 +7,7 @@ from langchain_community.utilities import WikipediaAPIWrapper, DuckDuckGoSearchA
 from langchain_core.agents import AgentAction
 
 from app.constants import PromptTemplate, MagicSentence
-from app.schemas.models import LLMProviderRequest
+from app.schemas.prompt import LLMProviderRequest
 from app.exceptions.service import InvalidReActToolError
 from app.src.llm_provider.llm_tool import model_setting
 

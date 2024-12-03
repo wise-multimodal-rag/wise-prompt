@@ -1,8 +1,6 @@
+from app.api.examples import OPENAI_LLM_TOOL, OPENAI_DEFAULT_MODEL
 from app.constants import PromptTemplate
-from app.schemas.models import SelfConsistencyRequest, Request, LLMProviderRequest, AutoCoTRequest, ReActRequest
-
-OPENAI_LLM_TOOL = "OpenAI"
-OPENAI_DEFAULT_MODEL = "gpt-4o-mini"
+from app.schemas.prompt import SelfConsistencyRequest, Request, LLMProviderRequest, AutoCoTRequest, ReActRequest
 
 ollama_default_example = {
     "summary": "Ollama default prompting 기본 예제",

@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.examples.ape import ape_examples
 from app.dependencies import get_token_header
-from app.schemas.models import ApeRequest
+from app.schemas.ape import ApeRequest
 from app.schemas.response import APIResponseModel
 from app.src.ape.ape import ape
 

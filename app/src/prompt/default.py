@@ -1,4 +1,4 @@
-from app.schemas.models import LLMProviderRequest
+from app.schemas.prompt import LLMProviderRequest
 from app.constants import PromptTemplate
 from app.src.llm_provider.llm_tool import model_setting
 

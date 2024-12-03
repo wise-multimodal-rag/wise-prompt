@@ -5,7 +5,7 @@ import httpx
 import pytest
 from langchain_openai import OpenAI
 
-from app.api.examples.prompt import OPENAI_DEFAULT_MODEL
+from app.api.examples import OPENAI_DEFAULT_MODEL
 
 system_prompt = """
 You run in a loop of Thought, Action, PAUSE, Observation.
