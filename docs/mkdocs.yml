@@ -1,0 +1,57 @@
+site_name: Python FastAPI Template
+site_dir: public
+theme:
+  name: material
+  custom_dir: overrides
+  features:
+    - content.code.copy
+  favicon: ./images/wisenut_icon.ico
+  logo: ./images/wisenut_logo.png
+markdown_extensions:
+  # code block
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  # emoji
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  # admonition
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+# 'mike' for versioning
+extra:
+  version:
+    provider: mike
+nav:
+  - HOME: './index.md'
+  - Quick Start: './start/quick-start.md'
+  - Getting Started: './start/getting-started.md'
+  - Guide:
+    - Secret Detection: './guide/secret-detection.md'
+  - API Docs: './api/docs.html'
+
+plugins:
+  - mike:
+      # These fields are all optional; the defaults are as below...
+      alias_type: symlink
+      redirect_template: null
+      deploy_prefix: 'public'
+      canonical_version: null
+      version_selector: true
+      css_dir: css
+      javascript_dir: js
+  - search:
+      lang: ['en', 'ko']  # 다국어 지원 (한국어 검색 가능하게 설정)
+      separator: '[\s\-]+'
