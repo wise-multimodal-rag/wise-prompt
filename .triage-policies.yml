@@ -1,0 +1,58 @@
+resource_rules:
+  issues:
+    rules:
+      - name: find all open, no assignee issues -> comment issues
+        conditions:
+          state: opened
+          ruby: |
+            !has_assignee?
+        actions:
+          comment: |
+            {{author}} 이슈에 한 명 이상의 Assignee를 지정해 주세요.
+            
+      - name: find all open, no label issues -> comment issues
+        conditions:
+          state: opened
+          labels:
+            - None
+        actions:
+          comment: |
+            {{author}} 이슈에 한 가지 이상의 Label을 지정해 주세요.
+
+      - name: find holding issues after closed 30 days -> mention author
+        conditions:
+          state: closed
+          labels:
+            - holding
+          # 현재 날짜에서 30일을 뺀 날짜 보다 작으면 (30일 이상 지났다면)
+          ruby: resource[:closed_at] < 30.days.ago.strftime('%Y-%m-%dT00:00:00.000Z')
+        actions:
+          comment: |
+            이 'holding' 이슈는 closed된지 30일 이상 지났습니다.
+            
+            생성일: {{created_at}}, 마지막 수정일: {{updated_at}}, closed: {{closed_at}}
+            
+            이슈를 다시 확인하세요. {{author}}
+            
+          status:
+            - close
+
+  merge_requests:
+    rules:
+      - name: find all open, no assignee MR -> comment MR
+        conditions:
+          state: opened
+          ruby: |
+            !has_assignee?
+        actions:
+          comment: |
+            {{author}} MR에 한 명 이상의 Assignee를 지정해 주세요.
+            
+      - name: find all open, no label MR -> comment MR
+        conditions:
+          state: opened
+          labels:
+            - None
+        actions:
+          comment: |
+            {{author}} MR에 한 가지 이상의 Label을 지정해 주세요.
