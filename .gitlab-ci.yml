@@ -14,5 +14,6 @@ include:
   - local: '.gitlab/ci/Test.gitlab-ci.yml'
   - local: '.gitlab/ci/Build-and-Push-App.gitlab-ci.yml'
   - local: '.gitlab/ci/Container-Scanning.gitlab-ci.yml'
+  - local: '.gitlab/ci/Openapi.gitlab-ci.yml'
   - local: '.gitlab/ci/Openapi-Docs.gitlab-ci.yml'
   - local: '.gitlab/ci/Mkdocs.gitlab-ci.yml'
