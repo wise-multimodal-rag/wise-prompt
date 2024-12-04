@@ -4,7 +4,9 @@ from typing import List, Tuple
 
 from app.constants import APETemplate
 from app.schemas.ape import ApeResponse, ApeInputOutput
-from app.src.ape import generate, evaluate, config, template, data, llm
+from app.src.ape import generate, evaluate, config, data, llm
+from app.src.ape.config import template
+from app.src.ape.config.config import simple_config, update_config
 
 
 def get_simple_prompt_gen_template(prompt_gen_template, prompt_gen_mode):
@@ -52,7 +54,7 @@ def simple_ape(
         An evaluation result and a function to evaluate the prompts with new inputs.
     """
     prompt_gen_template = get_simple_prompt_gen_template(prompt_gen_template, prompt_gen_mode)
-    conf = config.simple_config(
+    conf = simple_config(
         eval_model, prompt_gen_model, prompt_gen_mode, num_prompts, eval_rounds, prompt_gen_batch_size, eval_batch_size)
     return find_prompts(eval_template, demos_template, prompt_gen_data, eval_data, conf,
                         prompt_gen_template=prompt_gen_template)
@@ -75,7 +77,7 @@ def simple_eval(
     """
     eval_template = template.EvalTemplate(eval_template)
     demos_template = template.DemosTemplate(demos_template)
-    conf = config.update_config({}, 'configs/default.yaml')
+    conf = update_config({}, 'configs/default.yaml')
     conf['evaluation']['model']['gpt_config']['model'] = eval_model
     conf['evaluation']['num_samples'] = min(len(dataset[0]), num_samples)
     res = evaluate.evalute_prompts(
@@ -90,7 +92,7 @@ def simple_estimate_cost(
         num_prompts=50, eval_rounds=10, prompt_gen_batch_size=200, eval_batch_size=500):
     """Simple Estimate Cost func"""
     prompt_gen_template = get_simple_prompt_gen_template(prompt_gen_template, prompt_gen_mode)
-    conf = config.simple_config(eval_model, prompt_gen_model, prompt_gen_mode, num_prompts, eval_rounds,
+    conf = simple_config(eval_model, prompt_gen_model, prompt_gen_mode, num_prompts, eval_rounds,
                                 prompt_gen_batch_size, eval_batch_size)
     return estimate_cost(eval_template, demos_template, dataset, dataset, conf, prompt_gen_template=prompt_gen_template)
 
@@ -112,7 +114,7 @@ def find_prompts(eval_template, demos_template, prompt_gen_data, eval_data, conf
     Returns:
         An evaluation result. Also returns a function to evaluate the prompts with new inputs.
     """
-    conf = config.update_config(conf, base_conf)
+    conf = update_config(conf, base_conf)
     # Generate prompts
     eval_template = template.EvalTemplate(eval_template)
     demos_template = template.DemosTemplate(demos_template)
@@ -155,7 +157,7 @@ def evaluate_prompts(prompts, eval_template, eval_data, demos_template, few_shot
     Returns:
         A list of prompts and their scores, sorted by score.
     """
-    conf = config.update_config(conf, base_conf)
+    conf = update_config(conf, base_conf)
     # Generate prompts
     eval_template = template.EvalTemplate(eval_template)
     demos_template = template.DemosTemplate(demos_template)
@@ -169,7 +171,7 @@ def evaluate_prompts(prompts, eval_template, eval_data, demos_template, few_shot
 def estimate_cost(eval_template, demos_template, prompt_gen_data, eval_data, conf, base_conf='configs/default.yaml',
                   few_shot_data=None, prompt_gen_template=None, eval_query=None):
     """Estimate Cost"""
-    conf = config.update_config(conf, base_conf)
+    conf = update_config(conf, base_conf)
     max_prompt_len = conf['generation']['model']['gpt_config']['max_tokens']
     num_prompts = conf['generation']['num_prompts_per_subsample'] * \
                   conf['generation']['num_subsamples']
