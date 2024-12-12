@@ -33,3 +33,8 @@ archive.zip
 *~
 .*.sw?
 .cache
+/docs/
+/.gitlab/
+/.gitlab-ci.yml
+/dev.Dockerfile
+/gunicorn.Dockerfile
